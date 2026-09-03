@@ -1,0 +1,45 @@
+
+services:
+  stirling-pdf:
+    image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
+    container_name: stirling-pdf
+    ports:
+      - '8081:8080'
+    volumes:
+      # Persistent data storage
+      - /srv/data/stirling-pdf/tessdata:/usr/share/tessdata     # OCR language files
+      - /srv/data/stirling-pdf/configs:/configs                 # Settings & database
+      - /srv/data/stirling-pdf/logs:/logs                       # Application logs
+      - /srv/data/stirling-pdf/customFiles:/customFiles:rw      # Custom branding files
+      - /srv/data/stirling-pdf/pipeline:/pipeline               # Automation configs
+    environment:
+      # Core Settings
+      - SECURITY_ENABLELOGIN=true            # Enable user authentication
+
+      # Language & Localization
+      - SYSTEM_DEFAULTLOCALE=en-US           # Default UI locale for new users
+
+      # System Configuration
+      - SYSTEM_GOOGLEVISIBILITY=false        # Hide from search engines
+      - SYSTEM_ROOTURIPATH=/                 # Base URL path
+      - SYSTEMFILEUPLOADLIMIT=2000MB         # Max upload size (legacy: SYSTEM_MAXFILESIZE in MB)
+
+    restart: unless-stopped
+
+    networks: [web]
+
+    # Optional: Resource limits
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+          cpus: '3.0'
+        reservations:
+          memory: 2G
+          cpus: '1.0'
+
+
+networks:
+  web:
+    external: true
+

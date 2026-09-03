@@ -1,0 +1,25 @@
+services:
+  caddy:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # Required for HTTP/3
+    volumes:
+      - /srv/docker/caddy/Caddyfile:/etc/caddy/Caddyfile
+      - /srv/data/caddy/caddy_data:/data
+      - /srv/docker/caddy/config:/config
+    networks: [web]
+
+volumes:
+  caddy_data:      # Essential: Persists Let's Encrypt certificates
+  caddy_config:    # Essential: Persists internal Caddy configurations
+
+networks:
+  web:
+    external: true
+

@@ -1,0 +1,9 @@
+stirling.diena.dev {
+    # Increase maximum upload file size to 100MB
+    request_body {
+        max_size 2000mb
+    }
+
+    # Proxy all traffic to the backend
+    reverse_proxy stirling-pdf:8080 
+}
